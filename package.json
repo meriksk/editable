@@ -1,0 +1,56 @@
+{
+  "name": "@meriksk/editable",
+  "version": "0.1.0",
+  "description": "jQuery inline plain-text editing plugin with AJAX save and fluent API",
+  "type": "module",
+  "main": "dist/editable.cjs.js",
+  "module": "dist/editable.esm.js",
+  "browser": "dist/editable.umd.js",
+  "exports": {
+    ".": {
+      "import": "./dist/editable.esm.js",
+      "require": "./dist/editable.cjs.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meriksk/editable.git"
+  },
+  "keywords": [
+    "jquery",
+    "contenteditable",
+    "inline-edit",
+    "editable",
+    "plugin"
+  ],
+  "author": "meriksk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/meriksk/editable/issues"
+  },
+  "homepage": "https://github.com/meriksk/editable#readme",
+  "peerDependencies": {
+    "jquery": ">=1.9"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@vitest/coverage-v8": "^3.0.0",
+    "jquery": "^3.7.0",
+    "jsdom": "^26.0.0",
+    "rollup": "^4.0.0",
+    "vitest": "^3.0.0"
+  }
+}
