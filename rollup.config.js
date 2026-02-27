@@ -1,4 +1,5 @@
 import resolve from "@rollup/plugin-node-resolve";
+import terser from "@rollup/plugin-terser";
 import { readFileSync } from "fs";
 
 const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
@@ -20,10 +21,23 @@ export default {
             banner,
         },
         {
+            file: "dist/editable.esm.min.js",
+            format: "esm",
+            banner,
+            plugins: [terser()],
+        },
+        {
             file: "dist/editable.cjs.js",
             format: "cjs",
             banner,
             exports: "auto",
+        },
+        {
+            file: "dist/editable.cjs.min.js",
+            format: "cjs",
+            banner,
+            exports: "auto",
+            plugins: [terser()],
         },
         {
             file: "dist/editable.umd.js",
@@ -33,6 +47,16 @@ export default {
             globals: {
                 jquery: "$",
             },
+        },
+        {
+            file: "dist/editable.umd.min.js",
+            format: "umd",
+            name: "Editable",
+            banner,
+            globals: {
+                jquery: "$",
+            },
+            plugins: [terser()],
         },
     ],
 };
