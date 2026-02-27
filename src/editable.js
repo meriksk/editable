@@ -171,11 +171,8 @@ export default function editable($) {
 
             getText: function (el) {
                 if (settings.mode === 'input') {
-                    return (
-                        $(el)
-                            .find('.' + settings.inputClass)
-                            .val() || ''
-                    );
+                    var $input = $.data(el, 'editable-input');
+                    return ($input && $input.val()) || '';
                 }
                 return $(el).text();
             },
@@ -189,6 +186,7 @@ export default function editable($) {
                 if (settings.mode === 'input') {
                     var text = $(el).text();
                     var $input = $('<input type="text">').addClass(settings.inputClass).val(text);
+                    $.data(el, 'editable-input', $input);
                     $(el).empty().append($input);
                     methods.bindInputEvents($input, el);
                     $input.focus().select();
@@ -204,13 +202,10 @@ export default function editable($) {
 
             stopEditing: function (el) {
                 if (settings.mode === 'input') {
-                    var val =
-                        $(el)
-                            .find('.' + settings.inputClass)
-                            .val() || '';
-                    $(el)
-                        .find('.' + settings.inputClass)
-                        .remove();
+                    var $input = $.data(el, 'editable-input');
+                    var val = ($input && $input.val()) || '';
+                    $.removeData(el, 'editable-input');
+                    if ($input) { $input.remove(); }
                     $(el).text(val);
                 } else {
                     $(el).removeAttr('contenteditable');
@@ -221,9 +216,9 @@ export default function editable($) {
             recoverContent: function (el) {
                 var original = $.data(el, 'editable-original') || '';
                 if (settings.mode === 'input') {
-                    $(el)
-                        .find('.' + settings.inputClass)
-                        .remove();
+                    var $input = $.data(el, 'editable-input');
+                    $.removeData(el, 'editable-input');
+                    if ($input) { $input.remove(); }
                 }
                 $(el)
                     .text(original)
@@ -404,9 +399,9 @@ export default function editable($) {
                     if ($(this).hasClass(settings.editingClass)) {
                         var original = $.data(this, 'editable-original') || '';
                         if (settings.mode === 'input') {
-                            $(this)
-                                .find('.' + settings.inputClass)
-                                .remove();
+                            var $input = $.data(this, 'editable-input');
+                            $.removeData(this, 'editable-input');
+                            if ($input) { $input.remove(); }
                         }
                         $(this).text(original).removeAttr('contenteditable');
                     }

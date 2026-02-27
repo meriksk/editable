@@ -96,6 +96,41 @@ describe("$.fn.editable", () => {
             $el.trigger("click");
             expect($el.find("input.my-input").length).toBe(1);
         });
+
+        it("applies multi-class inputClass to the input element", () => {
+            $el.editable({ mode: "input", trigger: "click", inputClass: "form-control form-control-sm" });
+            $el.trigger("click");
+            const $input = $el.find("input");
+            expect($input.hasClass("form-control")).toBe(true);
+            expect($input.hasClass("form-control-sm")).toBe(true);
+        });
+
+        it("saves correctly with multi-class inputClass", () => {
+            $el.editable({ mode: "input", trigger: "click", inputClass: "form-control form-control-sm" });
+            $el.trigger("click");
+            $el.find("input").val("New text");
+            $el.find("input").trigger($.Event("keydown", { keyCode: 13 }));
+            expect($el.text()).toBe("New text");
+            expect($el.find("input").length).toBe(0);
+        });
+
+        it("cancels correctly with multi-class inputClass", () => {
+            $el.editable({ mode: "input", trigger: "click", inputClass: "form-control form-control-sm" });
+            $el.trigger("click");
+            $el.find("input").val("Changed");
+            $el.find("input").trigger($.Event("keydown", { keyCode: 27 }));
+            expect($el.text()).toBe("Hello");
+            expect($el.find("input").length).toBe(0);
+        });
+
+        it("destroy restores content correctly with multi-class inputClass", () => {
+            const api = $el.editable({ mode: "input", trigger: "click", inputClass: "form-control form-control-sm" });
+            $el.trigger("click");
+            $el.find("input").val("Changed");
+            api.destroy();
+            expect($el.text()).toBe("Hello");
+            expect($el.find("input").length).toBe(0);
+        });
     });
 
     describe("callbacks", () => {
