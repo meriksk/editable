@@ -1,4 +1,4 @@
-# @meriksk/editable
+# Editable
 
 jQuery inline plain-text editing plugin. Enables in-place editing of table cells, labels, or any element — with optional AJAX save, a fluent callback API, and configurable CSS states.
 
@@ -34,7 +34,15 @@ $('td.editable').editable();
 ### With AJAX save
 
 ```js
-$('td.editable').editable({ url: '/save' })
+$('td.editable').editable({ 
+        url: '/save'.
+        data: function () {
+            return { 
+                id: $(this).data("id"), 
+                field: $(this).data("field") 
+            };
+        }
+    })
     .change(function (text, payload) { console.log('saving', payload); })
     .saved(function (text, response) { console.log('saved', response); })
     .error(function (xhr) { console.error('failed', xhr); });
@@ -45,7 +53,8 @@ $('td.editable').editable({ url: '/save' })
 ```js
 $('.label').editable({
     mode: 'input',
-    url:  '/save',
+    url: '/save',
+    inputClass: "form-control"
 });
 ```
 
@@ -91,7 +100,8 @@ $('.label').editable({
 `.editable()` returns a chainable API object, not the jQuery set.
 
 ```js
-const api = $('td').editable({ url: '/save' })
+const api = $('td')
+    .editable({ url: '/save' })
     .start(fn)    // onStart
     .change(fn)   // onSave  — content changed
     .save(fn)     // onSaving — AJAX dispatched
@@ -106,7 +116,8 @@ api.elements();   // get original jQuery set back
 ## Events
 
 ```js
-$('td').editable().elements()
+$('td').editable()
+    .elements()
     .on('editable:start',  (e, text) => {})
     .on('editable:save',   (e, text, payload) => {})
     .on('editable:saving', (e, text, payload) => {})
@@ -126,7 +137,7 @@ $('td').editable().elements()
 ## Global Defaults
 
 ```js
-$.fn.editable.defaults.url          = '/save';
+$.fn.editable.defaults.url = '/save';
 $.fn.editable.defaults.savedTimeout = 5000;
 ```
 

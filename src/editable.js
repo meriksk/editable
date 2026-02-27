@@ -110,7 +110,7 @@
  *   editable($);
  *
  *   // Override defaults globally
- *   $.fn.editable.defaults.url          = "/save";
+ *   $.fn.editable.defaults.url = "/save";
  *   $.fn.editable.defaults.savedTimeout = 5000;
  *
  *   // Fluent API
@@ -126,7 +126,7 @@
  *
  *   // With AJAX save and per-element data from data-* attributes
  *   $("td[data-field]").editable({
- *       url:  "/admin/content/save",
+ *       url:"/admin/content/save",
  *       data: function () {
  *           return { id: $(this).data("id"), field: $(this).data("field") };
  *       },
@@ -136,11 +136,11 @@
  *
  *   // Input mode with custom classes
  *   $(".label").editable({
- *       mode:         "input",
- *       inputClass:   "form-control form-control-sm",
+ *       mode: "input",
+ *       inputClass: "form-control form-control-sm",
  *       editingClass: "is-editing",
- *       savedClass:   "is-saved",
- *       url:          "/save",
+ *       savedClass: "is-saved",
+ *       url: "/save",
  *   });
  *
  *   // Listening to DOM events directly
@@ -165,16 +165,16 @@ export default function editable($) {
                     return;
                 }
                 $this.each(function () {
-                    $.data(this, "editable-original", $(this).text());
+                    $.data(this, 'editable-original', $(this).text());
                 });
             },
 
             getText: function (el) {
-                if (settings.mode === "input") {
+                if (settings.mode === 'input') {
                     return (
                         $(el)
-                            .find("." + settings.inputClass)
-                            .val() || ""
+                            .find('.' + settings.inputClass)
+                            .val() || ''
                     );
                 }
                 return $(el).text();
@@ -186,54 +186,57 @@ export default function editable($) {
                 }
                 $(el).removeClass(settings.errorClass).addClass(settings.editingClass);
 
-                if (settings.mode === "input") {
+                if (settings.mode === 'input') {
                     var text = $(el).text();
                     var $input = $('<input type="text">').addClass(settings.inputClass).val(text);
                     $(el).empty().append($input);
                     methods.bindInputEvents($input, el);
                     $input.focus().select();
                 } else {
-                    $(el).attr("contenteditable", "true").focus();
+                    $(el).attr('contenteditable', 'true').focus();
                 }
 
-                $(el).trigger("editable:start", [$(el).text()]);
-                if (typeof settings.onStart === "function") {
+                $(el).trigger('editable:start', [$(el).text()]);
+                if (typeof settings.onStart === 'function') {
                     settings.onStart.call(el, $(el).text());
                 }
             },
 
             stopEditing: function (el) {
-                if (settings.mode === "input") {
+                if (settings.mode === 'input') {
                     var val =
                         $(el)
-                            .find("." + settings.inputClass)
-                            .val() || "";
+                            .find('.' + settings.inputClass)
+                            .val() || '';
                     $(el)
-                        .find("." + settings.inputClass)
+                        .find('.' + settings.inputClass)
                         .remove();
                     $(el).text(val);
                 } else {
-                    $(el).removeAttr("contenteditable");
+                    $(el).removeAttr('contenteditable');
                 }
                 $(el).removeClass(settings.editingClass);
             },
 
             recoverContent: function (el) {
-                var original = $.data(el, "editable-original") || "";
-                if (settings.mode === "input") {
+                var original = $.data(el, 'editable-original') || '';
+                if (settings.mode === 'input') {
                     $(el)
-                        .find("." + settings.inputClass)
+                        .find('.' + settings.inputClass)
                         .remove();
                 }
-                $(el).text(original).removeAttr("contenteditable").removeClass(settings.editingClass);
-                $(el).trigger("editable:cancel");
-                if (typeof settings.onCancel === "function") {
+                $(el)
+                    .text(original)
+                    .removeAttr('contenteditable')
+                    .removeClass(settings.editingClass);
+                $(el).trigger('editable:cancel');
+                if (typeof settings.onCancel === 'function') {
                     settings.onCancel.call(el);
                 }
             },
 
             isDirty: function (el) {
-                return methods.getText(el) !== $.data(el, "editable-original");
+                return methods.getText(el) !== $.data(el, 'editable-original');
             },
 
             saveContent: function (el) {
@@ -246,26 +249,27 @@ export default function editable($) {
                 }
 
                 var text = methods.getText(el);
-                var resolvedData = typeof settings.data === "function" ? settings.data.call(el) : settings.data;
-                var elementExtra = $(el).data("extra") || {};
+                var resolvedData =
+                    typeof settings.data === 'function' ? settings.data.call(el) : settings.data;
+                var elementExtra = $(el).data('extra') || {};
                 var payload = $.extend({}, resolvedData, elementExtra);
                 payload[settings.dataKey] = text;
 
-                $(el).trigger("editable:save", [text, payload]);
-                if (typeof settings.onSave === "function") {
+                $(el).trigger('editable:save', [text, payload]);
+                if (typeof settings.onSave === 'function') {
                     settings.onSave.call(el, text, payload);
                 }
 
                 if (!settings.url) {
-                    $.data(el, "editable-original", text);
+                    $.data(el, 'editable-original', text);
                     methods.stopEditing(el);
                     return;
                 }
 
                 $(el).addClass(settings.savingClass);
 
-                $(el).trigger("editable:saving", [text, payload]);
-                if (typeof settings.onSaving === "function") {
+                $(el).trigger('editable:saving', [text, payload]);
+                if (typeof settings.onSaving === 'function') {
                     settings.onSaving.call(el, text, payload);
                 }
 
@@ -276,12 +280,12 @@ export default function editable($) {
                         data: payload,
                         success: function (response) {
                             $(el)
-                                .removeClass(settings.savingClass + " " + settings.errorClass)
+                                .removeClass(settings.savingClass + ' ' + settings.errorClass)
                                 .addClass(settings.savedClass);
-                            $.data(el, "editable-original", text);
+                            $.data(el, 'editable-original', text);
                             methods.stopEditing(el);
-                            $(el).trigger("editable:saved", [text, response]);
-                            if (typeof settings.onSaved === "function") {
+                            $(el).trigger('editable:saved', [text, response]);
+                            if (typeof settings.onSaved === 'function') {
                                 settings.onSaved.call(el, text, response);
                             }
                             if (settings.savedTimeout > 0) {
@@ -292,8 +296,8 @@ export default function editable($) {
                         },
                         error: function (xhr) {
                             $(el).removeClass(settings.savingClass).addClass(settings.errorClass);
-                            $(el).trigger("editable:error", [xhr]);
-                            if (typeof settings.onError === "function") {
+                            $(el).trigger('editable:error', [xhr]);
+                            if (typeof settings.onError === 'function') {
                                 settings.onError.call(el, xhr);
                             }
                             if (settings.errorTimeout > 0) {
@@ -302,18 +306,18 @@ export default function editable($) {
                                 }, settings.errorTimeout);
                             }
                         },
-                    }),
+                    })
                 );
             },
 
             bindInputEvents: function ($input, el) {
-                $input.on("focusout.editable", function () {
+                $input.on('focusout.editable', function () {
                     setTimeout(function () {
                         methods.saveContent(el);
                     }, 200);
                 });
 
-                $input.on("keydown.editable", function (e) {
+                $input.on('keydown.editable', function (e) {
                     if (e.keyCode === 27) {
                         methods.recoverContent(el);
                     }
@@ -329,25 +333,25 @@ export default function editable($) {
             },
 
             bindEvents: function () {
-                $this.on(settings.trigger + ".editable", function () {
+                $this.on(settings.trigger + '.editable', function () {
                     methods.startEditing(this);
                 });
 
-                if (settings.mode !== "input") {
-                    $this.on("focusout.editable", function () {
+                if (settings.mode !== 'input') {
+                    $this.on('focusout.editable', function () {
                         var el = this;
                         setTimeout(function () {
                             methods.saveContent(el);
                         }, 200);
                     });
 
-                    $this.on("keydown.editable", function (e) {
+                    $this.on('keydown.editable', function (e) {
                         if (e.keyCode === 27) {
                             methods.recoverContent(this);
                         }
                         if (e.keyCode === 13) {
                             e.preventDefault();
-                            $(this).trigger("focusout");
+                            $(this).trigger('focusout');
                         }
                         if ((e.ctrlKey || e.metaKey) && e.keyCode === 83) {
                             e.preventDefault();
@@ -355,9 +359,9 @@ export default function editable($) {
                         }
                     });
 
-                    $this.on("paste.editable", function (e) {
+                    $this.on('paste.editable', function (e) {
                         e.preventDefault();
-                        var text = e.originalEvent.clipboardData.getData("text/plain");
+                        var text = e.originalEvent.clipboardData.getData('text/plain');
                         var selection = window.getSelection();
                         if (!selection || !selection.rangeCount) {
                             return;
@@ -398,18 +402,26 @@ export default function editable($) {
             destroy: function () {
                 $this.each(function () {
                     if ($(this).hasClass(settings.editingClass)) {
-                        var original = $.data(this, "editable-original") || "";
-                        if (settings.mode === "input") {
+                        var original = $.data(this, 'editable-original') || '';
+                        if (settings.mode === 'input') {
                             $(this)
-                                .find("." + settings.inputClass)
+                                .find('.' + settings.inputClass)
                                 .remove();
                         }
-                        $(this).text(original).removeAttr("contenteditable");
+                        $(this).text(original).removeAttr('contenteditable');
                     }
-                    $(this).removeClass(settings.editingClass + " " + settings.savingClass + " " + settings.savedClass + " " + settings.errorClass);
-                    $.removeData(this, "editable-original");
+                    $(this).removeClass(
+                        settings.editingClass +
+                            ' ' +
+                            settings.savingClass +
+                            ' ' +
+                            settings.savedClass +
+                            ' ' +
+                            settings.errorClass
+                    );
+                    $.removeData(this, 'editable-original');
                 });
-                $this.off(".editable");
+                $this.off('.editable');
                 return api;
             },
             elements: function () {
@@ -422,21 +434,21 @@ export default function editable($) {
     };
 
     $.fn.editable.defaults = {
-        mode: "contenteditable",
-        trigger: "dblclick",
+        mode: 'contenteditable',
+        trigger: 'dblclick',
         url: null,
-        method: "POST",
-        dataKey: "content",
+        method: 'POST',
+        dataKey: 'content',
         data: {},
         recoverable: true,
-        editingClass: "ce-editing",
-        savingClass: "ce-saving",
-        savedClass: "ce-saved",
+        editingClass: 'ce-editing',
+        savingClass: 'ce-saving',
+        savedClass: 'ce-saved',
         savedTimeout: 2000,
-        errorClass: "ce-error",
+        errorClass: 'ce-error',
         errorTimeout: 0,
         ajaxOptions: {},
-        inputClass: "ce-input",
+        inputClass: 'ce-input',
         onStart: null,
         onSave: null,
         onSaving: null,
