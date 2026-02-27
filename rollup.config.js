@@ -10,6 +10,14 @@ const banner = `/*!
  * Released under the MIT License
  */`;
 
+// When loaded via <script> tag, auto-register with the global jQuery.
+// In CJS/AMD contexts `Editable` is never a global, so typeof check skips this safely.
+const browserFooter =
+    "if (typeof Editable === 'function') {" +
+    "  if (typeof jQuery !== 'undefined') { Editable(jQuery); }" +
+    "  else if (typeof $ !== 'undefined') { Editable($); }" +
+    "}";
+
 export default {
     input: "src/editable.js",
     external: ["jquery"],
@@ -44,6 +52,7 @@ export default {
             format: "umd",
             name: "Editable",
             banner,
+            footer: browserFooter,
             globals: {
                 jquery: "$",
             },
@@ -53,6 +62,7 @@ export default {
             format: "umd",
             name: "Editable",
             banner,
+            footer: browserFooter,
             globals: {
                 jquery: "$",
             },

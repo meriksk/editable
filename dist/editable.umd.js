@@ -472,3 +472,4 @@
     return editable;
 
 }));
+if (typeof Editable === 'function') {  if (typeof jQuery !== 'undefined') { Editable(jQuery); }  else if (typeof $ !== 'undefined') { Editable($); }}
